@@ -7,17 +7,27 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+
+import org.jivesoftware.smack.XMPPConnection;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class ConversationFragment extends Fragment {
 
-  static Contacts contact;
 
+  @InjectView(R.id.textinput) EditMessage msgEdit;
+  static Contacts contact;
+  static XmppClient xmppClient;
   private OnFragmentInteractionListener mListener;
 
-  public static ConversationFragment newInstance(Contacts contact) {
+  public static ConversationFragment newInstance(Contacts contact,XmppClient client) {
     ConversationFragment fragment = new ConversationFragment();
     ConversationFragment.contact = contact;
+    ConversationFragment.xmppClient = client;
     return fragment;
   }
 
@@ -34,7 +44,9 @@ public class ConversationFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_conversation, container, false);
+    View view=  inflater.inflate(R.layout.fragment_conversation, container, false);
+    ButterKnife.inject(this,view);
+    return view;
   }
 
   // TODO: Rename method, update argument and hook method into UI event
@@ -60,6 +72,14 @@ public class ConversationFragment extends Fragment {
     super.onDetach();
     mListener = null;
   }
+
+  @OnClick(R.id.textSendButton)
+  void sendMessage()
+  {
+    xmppClient.sendMessage(contact.getUserName(),msgEdit.getText().toString());
+    msgEdit.setText("");
+  }
+
 
   public interface OnFragmentInteractionListener {
 

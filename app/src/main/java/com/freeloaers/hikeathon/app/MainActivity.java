@@ -99,7 +99,7 @@ public class MainActivity extends ActionBarActivity implements XmppClient.MyConn
   {
     Toast.makeText(this,"Clicked on "+ mAdapter.getItem(position).getUserName(),Toast.LENGTH_SHORT).show();
     getFragmentManager().beginTransaction().replace(R.id.selected_conversation, ConversationFragment
-        .newInstance(mAdapter.getItem(position))).commit();
+        .newInstance(mAdapter.getItem(position),xmppClient)).commit();
   }
 
     @Override
