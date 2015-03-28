@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import java.util.ArrayList;
 
@@ -20,7 +21,7 @@ import butterknife.InjectView;
  * Created by exort on 29/3/15.
  */
 public class ContactAdapter extends ArrayAdapter<Contacts> {
-
+  TextDrawable.IBuilder builder;
 
   private final LayoutInflater mInflater;
 
@@ -28,6 +29,11 @@ public class ContactAdapter extends ArrayAdapter<Contacts> {
                         ArrayList<Contacts> objects) {
     super(context, R.layout.contact_list_row, objects);
     mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+     builder= TextDrawable.builder()
+        .beginConfig()
+        .withBorder(4)
+        .endConfig()
+        .rect();
   }
 
   @Override
@@ -40,12 +46,16 @@ public class ContactAdapter extends ArrayAdapter<Contacts> {
       convertView.setTag(holder);
     }else
       holder = (ContactViewHolder) convertView.getTag();
-    TextDrawable drawable = TextDrawable.builder()
-        .buildRect(getItem(position).getUserName().substring(0,1), Color.RED);
 
-    holder.img.setImageDrawable(drawable);
+    ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
+    int color = generator.getColor(getItem(position).getUserName());
 
-    holder.name.setText(getItem(position).getUserName());
+
+
+    holder.img.setImageDrawable(builder.build(getItem(position).getUserName().toUpperCase().substring(0,1), color));
+
+    holder.name.setText(getItem(position).getUserName().substring(0,getItem(position).getUserName().indexOf("@")));
+
     return  convertView;
 
   }
