@@ -41,12 +41,11 @@ public class ContactAdapter extends ArrayAdapter<Contacts> {
     }else
       holder = (ContactViewHolder) convertView.getTag();
     TextDrawable drawable = TextDrawable.builder()
-        .buildRect(getItem(position).getName().substring(0,1), Color.RED);
+        .buildRect(getItem(position).getUserName().substring(0,1), Color.RED);
 
     holder.img.setImageDrawable(drawable);
 
-    holder.name.setText(getItem(position).getName());
-
+    holder.name.setText(getItem(position).getUserName());
     return  convertView;
 
   }

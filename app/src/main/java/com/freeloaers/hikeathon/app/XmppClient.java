@@ -116,10 +116,10 @@ public class XmppClient {
         }
     }
 
-    private class GetFriendListTask extends AsyncTask<Void, Void, Void> {
+    private class GetFriendListTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             Roster roster = connection.getRoster();
             contactList.clear();
             Collection<RosterEntry> entries = roster.getEntries();
@@ -131,10 +131,10 @@ public class XmppClient {
                 contactList.add(new Contacts(userName, name, presence));
 
             }
-            return null;
+            return true;
         }
 
-        protected void onPostExecute(Void... args){
+        protected void onPostExecute(Boolean result){
             myConnectionListener.onGetFriendList(contactList);
         }
     }

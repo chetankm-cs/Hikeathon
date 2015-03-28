@@ -2,18 +2,37 @@ package com.freeloaers.hikeathon.app;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.filter.MessageTypeFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemClick;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements XmppClient.MyConnectionListener{
+
+    public static final String HOST = "hackathon.hike.in";
+    public static final int PORT = 8282;
+    public static final String USERNAME = "pop.chetan";
+    public static final String PASSWORD = "password";
+
+    private XmppClient xmppClient;
+    private PacketListener messageListener;
+
   @InjectView( R.id.list) ListView list;
   ContactAdapter mAdapter ;
 
@@ -21,7 +40,32 @@ public class MainActivity extends ActionBarActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    ButterKnife.inject(this);
+      ButterKnife.inject(this);
+      xmppClient = new XmppClient(this);
+      PacketFilter filter = new MessageTypeFilter(org.jivesoftware.smack.packet.Message.Type.chat);
+      messageListener = new PacketListener() {
+          @Override
+          public void processPacket(Packet packet) {
+              org.jivesoftware.smack.packet.Message message = (org.jivesoftware.smack.packet.Message) packet;
+              if (message.getBody() != null) {
+                  String fromName = StringUtils.parseBareAddress(message
+                          .getFrom());
+                  Log.e("XMPPChatDemoActivity", "Text Recieved " + message.getBody()
+                          + " from " + fromName);
+//                  messages.add(fromName + ":");
+//                  messages.add(message.getBody());
+//                  // Add the incoming message to the list view
+//                  mHandler.post(new Runnable() {
+//                      public void run() {
+//                          setListAdapter();
+//                      }
+//                  });
+              }
+          }
+      };
+      xmppClient.setMessageListener(messageListener, filter);
+      xmppClient.logIn(USERNAME, PASSWORD);
+
     mAdapter = new ContactAdapter(this,new ArrayList<Contacts>());
     list.setAdapter(mAdapter);
     mAdapter.notifyDataSetChanged();
@@ -55,4 +99,23 @@ public class MainActivity extends ActionBarActivity {
   {
 
   }
+
+    @Override
+    public void onAuthenticationSuccess() {
+        Toast.makeText(this, "Authentication success", Toast.LENGTH_SHORT).show();
+        xmppClient.getContactList();
+    }
+
+    @Override
+    public void onAuthenticationFailure() {
+        Toast.makeText(this, "Authentication failure", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onGetFriendList(LinkedList<Contacts> friendList) {
+        Toast.makeText(this,"Got Friend List",Toast.LENGTH_SHORT).show();
+        mAdapter.clear();
+        mAdapter.addAll(friendList);
+        mAdapter.notifyDataSetChanged();
+    }
 }
