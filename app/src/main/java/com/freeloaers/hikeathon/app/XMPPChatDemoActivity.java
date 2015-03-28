@@ -2,8 +2,10 @@ package com.freeloaers.hikeathon.app;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
@@ -27,8 +29,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class XMPPChatDemoActivity extends Activity {
+public class XMPPChatDemoActivity extends Activity implements  XmppClient.MyConnectionListener{
 
 	public static final String HOST = "hackathon.hike.in";
 	public static final int PORT = 8282;
@@ -42,13 +45,38 @@ public class XMPPChatDemoActivity extends Activity {
 	private EditText recipient;
 	private EditText textMessage;
 	private ListView listview;
+    private XmppClient xmppClient;
+    private PacketListener messageListener;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+        final XmppClient xmppClient = new XmppClient(this);
+        xmppClient.logIn(USERNAME, PASSWORD);
+        PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
+        messageListener = new PacketListener() {
+            @Override
+            public void processPacket(Packet packet) {
+                Message message = (Message) packet;
+                if (message.getBody() != null) {
+                    String fromName = StringUtils.parseBareAddress(message
+                            .getFrom());
+                    Log.e("XMPPChatDemoActivity", "Text Recieved " + message.getBody()
+                            + " from " + fromName );
+                    messages.add(fromName + ":");
+                    messages.add(message.getBody());
+                    // Add the incoming message to the list view
+                    mHandler.post(new Runnable() {
+                        public void run() {
+                            setListAdapter();
+                        }
+                    });
+                }
+            }
+        };
+        xmppClient.setMessageListener(messageListener, filter);
 		recipient = (EditText) this.findViewById(R.id.toET);
 		textMessage = (EditText) this.findViewById(R.id.chatET);
 		listview = (ListView) this.findViewById(R.id.listMessages);
@@ -60,20 +88,14 @@ public class XMPPChatDemoActivity extends Activity {
 			public void onClick(View view) {
 				String to = recipient.getText().toString();
 				String text = textMessage.getText().toString();
-
-				Log.e("XMPPChatDemoActivity", "Sending text " + text + " to " + to);
-				Message msg = new Message(to, Message.Type.chat);
-				msg.setBody(text);				
-				if (connection != null) {
-					connection.sendPacket(msg);
-					messages.add(connection.getUser() + ":");
-					messages.add(text);
-					setListAdapter();
-				}
+                xmppClient.sendMessage(to, text);
+                messages.add(xmppClient.getUser() + ":");
+                messages.add(text);
+                setListAdapter();
 			}
 		});
 
-		connect();
+//		connect();
 	}
 
 	/**
@@ -204,4 +226,19 @@ public class XMPPChatDemoActivity extends Activity {
 		t.start();
 		dialog.show();
 	}
+
+    @Override
+    public void onAuthenticationSuccess() {
+        Toast.makeText(this, "Authentication success", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAuthenticationFailure() {
+        Toast.makeText(this, "Authentication failure", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onGetFriendList(LinkedList<Contacts> friendList) {
+
+    }
 }
