@@ -2,6 +2,7 @@ package com.freeloaers.hikeathon.app;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +41,8 @@ public class MainActivity extends ActionBarActivity implements XmppClient.MyConn
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+      Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+      setSupportActionBar(toolbar);
       ButterKnife.inject(this);
       xmppClient = new XmppClient(this);
       PacketFilter filter = new MessageTypeFilter(org.jivesoftware.smack.packet.Message.Type.chat);
@@ -75,7 +78,7 @@ public class MainActivity extends ActionBarActivity implements XmppClient.MyConn
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.menu_main, menu);
+//    getMenuInflater().inflate(R.menu.menu_main, menu);
     return true;
   }
 

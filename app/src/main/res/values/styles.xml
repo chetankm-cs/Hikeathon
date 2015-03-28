@@ -1,8 +1,28 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/toolbar_color</item>
+
+        <!-- colorPrimaryDark is used for the status bar (with the
+             battery, clock, etc). -->
+        <item name="colorPrimaryDark">@color/status_bar_color</item>
+
+        <!-- colorAccent is used as the default value for
+             colorControlActivated which is used to tint widgets. -->
+        <item name="colorAccent">@color/status_bar_color</item>
+    </style>
+
+    <style name="AppToolBar" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorPrimaryInverse">@color/toolbar_title_color</item>
+        <item name="android:textColorPrimary">@color/toolbar_menu_text_color</item>
+        <item name="android:textColorSecondary">@color/toolbar_overflow_color</item>
+    </style>
+
+    <style name="AppToolbarPopUp" parent="Widget.AppCompat.Light.PopupMenu">
+        <item name="android:background">@color/popup_menu_background_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/popup_menu_text_color</item>
     </style>
 
 </resources>

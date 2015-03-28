@@ -14,5 +14,17 @@
     <color name="red">#ffe51c23</color>
     <color name="orange">#ffff9800</color>
     <color name="green">#ff259b24</color>
+    <color name="toolbar_color">#ff48ceff</color>
+    <color name="status_bar_color">#000000</color>
+    <color name="toolbar_title_color">#ff447cff</color>
+    <color name="toolbar_menu_text_color">#ff484848</color>
+    <color name="toolbar_overflow_color">#2A2A2A</color>
+    <color name="popup_menu_background_color">#EEEEEE</color>
+    <color name="popup_menu_text_color">#000000</color>
+    <color name="deal_card_background">#FFFFFF</color>
+    <color name="navigation_drawer_background">#FCFCFC</color>
+    <color name="navigation_drawer_email_color">#B2EBF2</color>
+    <color name="navaigation_drawer_divider_color">#EDEDED</color>
+    <color name="search_bar_color">#FFFFFF</color>
 
 </resources>
