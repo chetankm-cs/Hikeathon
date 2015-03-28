@@ -26,7 +26,7 @@ public class ContactAdapter extends ArrayAdapter<Contacts> {
 
   public ContactAdapter(Context context,
                         ArrayList<Contacts> objects) {
-    super(context, resource, objects);
+    super(context, R.layout.contact_list_row, objects);
     mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
   }
 
