@@ -4,14 +4,27 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnItemClick;
 
 
 public class MainActivity extends ActionBarActivity {
+  @InjectView( R.id.list) ListView list;
+  ContactAdapter mAdapter ;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    ButterKnife.inject(this);
+    mAdapter = new ContactAdapter(this,new ArrayList<Contacts>());
+    list.setAdapter(mAdapter);
+    mAdapter.notifyDataSetChanged();
   }
 
 
@@ -35,5 +48,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  @OnItemClick(R.id.list)
+  void openConversation(int position)
+  {
+
   }
 }
