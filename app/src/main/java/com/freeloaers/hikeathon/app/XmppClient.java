@@ -5,12 +5,15 @@ import android.os.AsyncTask;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -20,6 +23,7 @@ public class XmppClient {
 
     public static final String HOST = "hackathon.hike.in";
     public static final int PORT = 8282;
+    private LinkedList<Contacts> contactList = new LinkedList<Contacts>();
     private PacketListener messageListener;
     MyConnectionListener myConnectionListener;
     XMPPConnection connection;
@@ -71,8 +75,8 @@ public class XmppClient {
 
     }
 
-    public void getFriendList(){
-
+    public void getContactList(){
+        new GetFriendListTask().execute();
     }
 
     public void sendMessage(String to, String message){
@@ -112,4 +116,26 @@ public class XmppClient {
         }
     }
 
+    private class GetFriendListTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Roster roster = connection.getRoster();
+            contactList.clear();
+            Collection<RosterEntry> entries = roster.getEntries();
+            for (RosterEntry entry : entries) {
+                String userName= entry.getUser();
+                String name = entry.getName();
+                Presence presence = roster.getPresence(entry
+                        .getUser());
+                contactList.add(new Contacts(userName, name, presence));
+
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void... args){
+            myConnectionListener.onGetFriendList(contactList);
+        }
+    }
 }
